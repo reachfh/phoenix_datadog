@@ -37,6 +37,7 @@ defmodule PhoenixDatadog.MixProject do
       {:esbuild, "~> 0.4", runtime: Mix.env() == :dev},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.18"},
+      {:httpoison, "~> 1.8"},
       {:jason, "~> 1.2"},
       {:phoenix, "~> 1.6.10"},
       {:phoenix_ecto, "~> 4.4"},
@@ -49,6 +50,13 @@ defmodule PhoenixDatadog.MixProject do
       {:swoosh, "~> 1.3"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
+      # {:spandex_datadog, github: "TheRealReal/spandex_datadog", ref: "c28d330"},
+      {:spandex_datadog, "~> 1.2"},
+      {:spandex_phoenix, "~> 1.0"},
+      # Overrides spandex_datadog's dependency on telemetry v0.4 for Oban v2.9
+      # {:telemetry, "~> 1.0", override: true},
+      # {:telemetry_poller, "~> 0.4"},
+      {:telemetry_metrics_statsd, "~> 0.3"},
     ]
   end
 
