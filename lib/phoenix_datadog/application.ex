@@ -7,9 +7,12 @@ defmodule PhoenixDatadog.Application do
 
   @impl true
   def start(_type, _args) do
+    SpandexPhoenix.Telemetry.install()
+
     children = [
+      {SpandexDatadog.ApiServer, datadog_opts()},
       # Start the Ecto repository
-      PhoenixDatadog.Repo,
+      # PhoenixDatadog.Repo,
       # Start the Telemetry supervisor
       PhoenixDatadogWeb.Telemetry,
       # Start the PubSub system
@@ -24,6 +27,17 @@ defmodule PhoenixDatadog.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: PhoenixDatadog.Supervisor]
     Supervisor.start_link(children, opts)
+  end
+
+  defp datadog_opts do
+    [
+      host: System.get_env("DATADOG_HOST") || "localhost",
+      port: System.get_env("DATADOG_PORT") || 8126,
+      batch_size: String.to_integer(System.get_env("SPANDEX_BATCH_SIZE") || "1"),
+      sync_threshold: String.to_integer(System.get_env("SPANDEX_SYNC_THRESHOLD") || "20"),
+      verbose?: true,
+      # http: HTTPoison
+    ]
   end
 
   # Tell Phoenix to update the endpoint configuration
