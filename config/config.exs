@@ -16,6 +16,8 @@ config :phoenix_datadog, PhoenixDatadogWeb.Endpoint,
   render_errors: [view: PhoenixDatadogWeb.ErrorView, accepts: ~w(html json), layout: false],
   pubsub_server: PhoenixDatadog.PubSub,
   live_view: [signing_salt: "upWfOuZ+"]
+  # This is not needed with the new telemetry support in Phoenix
+  # instrumenters: [SpandexPhoenix.Instrumenter]
 
 # Configures the mailer
 #
@@ -42,10 +44,19 @@ config :esbuild,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  # Add Datadog trace_id and span_id to log messages for correllation
+  metadata: [:request_id, :trace_id, :span_id]
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+config :phoenix_datadog, PhoenixDatadog.Tracer,
+  adapter: SpandexDatadog.Adapter,
+  # disabled?: true,
+  env: "development",
+  service: :phoenix_datadog
+
+config :spandex_phoenix, tracer: PhoenixDatadog.Tracer
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
